@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MATEMÁTICA ENFERMERÍA - Termometría Clínica: Escalas Celsius, Fahrenheit y Kelvin (UCCuyo)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- KaTeX for formulas & clinical standards -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f7f9f6;
+      color: #1e293b;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Paleta Institucional UCCuyo (Verde Oliva Canónico) */
+    .text-accent { color: #436600; }
+    .bg-accent { background-color: #436600; }
+    .bg-accent-hover:hover { background-color: #324d00; }
+    .bg-accent-light { background-color: #f1f6eb; }
+    .border-accent { border-color: #436600; }
+
+    .text-primary { color: #436600; }
+    .bg-primary { background-color: #436600; }
+    .bg-primary-dark { background-color: #324d00; }
+    .border-primary { border-color: #436600; }
+    
+    .focus-accent:focus {
+      border-color: #436600;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 102, 0, 0.2);
+    }
+    
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .interactive-card {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .interactive-card:hover {
+      transform: translateY(-2px);
+      border-color: #436600;
+      box-shadow: 0 10px 25px -5px rgba(67, 102, 0, 0.12);
+    }
+
+    /* Termómetros clínicos estilizados */
+    .tube-glass {
+      background: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, rgba(241,245,249,0.3) 50%, rgba(203,213,225,0.8) 100%);
+      box-shadow: inset 2px 0 5px rgba(0,0,0,0.12), inset -2px 0 5px rgba(0,0,0,0.12);
+    }
+    .mercury-column {
+      transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-accent/20 text-gray-800">
+
+  <!-- ==================== CABECERA INSTITUCIONAL UCCUYO ==================== -->
+  <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white font-bold text-xl shadow-md">
+          MAT
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-gray-800 tracking-wide uppercase">MATEMÁTICA Y BIOFÍSICA APLICADA</h1>
+          <p class="text-xs text-gray-500 font-semibold">Curso de Ingreso a la Licenciatura en Enfermería (Facultad de Cs. Médicas - UCCuyo)</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Botón Vademécum Teórico -->
+        <button onclick="openFormulasModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-200 transition">
+          <i class="fa-solid fa-book-bookmark text-accent"></i>
+          <span class="hidden sm:inline">Vademécum</span>
+        </button>
+        <!-- Botón Guía de Uso -->
+        <button onclick="openTutorial()" class="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-accent-hover transition">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Guía de Uso</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== CONTENIDO PRINCIPAL CON NAVEGACIÓN LATERAL ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-6">
+    
+    <!-- Menú de Navegación Lateral (4 Módulos) -->
+    <nav class="w-full lg:w-64 flex flex-row lg:flex-col gap-2 bg-white p-3 rounded-2xl shadow-sm border border-gray-200 overflow-x-auto lg:overflow-x-visible whitespace-nowrap lg:whitespace-normal sticky top-20 h-fit" id="navTabs">
+      <button onclick="switchTab('mod1')" data-tab="mod1" class="nav-btn bg-accent text-white flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-temperature-half"></i> <span>1. Fundamentos & Medición</span>
+      </button>
+      <button onclick="switchTab('mod2')" data-tab="mod2" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-scale-balanced"></i> <span>2. Escalas & Termómetros</span>
+      </button>
+      <button onclick="switchTab('mod3')" data-tab="mod3" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-calculator"></i> <span>3. Fórmulas de Conversión</span>
+      </button>
+      <button onclick="switchTab('mod4')" data-tab="mod4" class="nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2">
+        <i class="fa-solid fa-user-nurse"></i> <span>4. Casos Clínicos de Guardia</span>
+      </button>
+    </nav>
+
+    <!-- Área de Contenido Dinámico -->
+    <div class="flex-1 space-y-6 min-w-0">
+
+      <!-- ============================================================== -->
+      <!-- MÓDULO 1: FUNDAMENTOS DE LA TEMPERATURA Y METROLOGÍA CLÍNICA   -->
+      <!-- ============================================================== -->
+      <section id="mod1" class="module-section space-y-6">
+        
+        <!-- Module Intro Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-accent">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center space-x-2 text-accent text-xs font-semibold tracking-wider uppercase mb-1">
+                <i class="fa-solid fa-temperature-arrow-up"></i>
+                <span>Módulo 1 • Metrología y Constantes Vitales</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Temperatura: Magnitud del Estado Térmico en Enfermería</h2>
+              <p class="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                La temperatura corporal es uno de los signos vitales primordiales. Medir con exactitud metrológica, interpretar su unidad y consignar su símbolo convencional es esencial para valorar la homeostasis y evitar errores en la administración farmacológica o en la detección de hipotermia y síndrome febril.
+              </p>
+            </div>
+            <div class="bg-accent-light border border-accent/30 p-3.5 rounded-xl flex items-center space-x-3 self-start md:self-auto shrink-0">
+              <i class="fa-solid fa-stethoscope text-accent text-2xl"></i>
+              <div>
+                <p class="text-[11px] text-accent uppercase font-bold">Principio de Medición</p>
+                <p class="text-xs text-slate-700 font-mono">Magnitud $\to$ Medida $\to$ Unidad</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dos Tarjetas Conceptuales: Magnitud e Instrumento -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Tarjeta 1: Concepto Físico -->
+          <div class="interactive-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-accent-light text-accent flex items-center justify-center text-lg">
+                <i class="fa-solid fa-atom"></i>
+              </div>
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-800">Definición de Temperatura</h3>
+                <p class="text-xs text-slate-500">Perspectiva termodinámica y biofísica</p>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Es una <strong>magnitud física que caracteriza el estado térmico de un cuerpo</strong> o sistema. A nivel microscópico, se relaciona directamente con la energía cinética media de las partículas que lo componen.
+            </p>
+            <div class="bg-accent-light border-l-4 border-accent p-3.5 rounded-r-xl text-xs text-slate-700">
+              <p class="font-bold text-accent mb-1"><i class="fa-solid fa-circle-info mr-1"></i> En el organismo humano:</p>
+              Refleja el equilibrio homeostático entre la producción de calor metabólico (termogénesis) y su pérdida hacia el medio ambiente (termólisis), regulado por el centro termorregulador hipotalámico.
+            </div>
+          </div>
+
+          <!-- Tarjeta 2: Instrumento de Medición -->
+          <div class="interactive-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-accent-light text-accent flex items-center justify-center text-lg">
+                <i class="fa-solid fa-briefcase-medical"></i>
+              </div>
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-800">El Termómetro Clínico</h3>
+                <p class="text-xs text-slate-500">Instrumento de control de constantes vitales</p>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+              Instrumento diseñado para valorar con alta sensibilidad el estado de salud del paciente. Traduce una propiedad física sensible a la temperatura (dilatación de líquidos, resistencia eléctrica o radiación infrarroja) en una lectura cuantitativa unívoca.
+            </p>
+            <div class="bg-emerald-50 border-l-4 border-emerald-600 p-3.5 rounded-r-xl text-xs text-slate-700">
+              <p class="font-bold text-emerald-800 mb-1"><i class="fa-solid fa-check-double mr-1"></i> Principio Cero:</p>
+              El termómetro requiere alcanzar el <em>equilibrio térmico</em> con los tejidos del paciente (axilar, bucal, rectal o timpánico) para registrar la temperatura real de manera fidedigna.
+            </div>
+          </div>
+        </div>
+
+        <!-- Desglose Metrológico Interactivo: Ejemplo 37,5 °C -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <span class="text-xs font-bold text-accent uppercase tracking-wider">Metrología Asistencial</span>
+              <h3 class="text-lg font-bold text-slate-800">
+                Desglose Metrológico de un Registro Clínico: 
+                <span class="text-accent bg-accent-light px-2.5 py-0.5 rounded-lg border border-accent/30 font-mono">37,5 °C</span>
+              </h3>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full self-start">
+              Estructura cuádruple de la medida
+            </span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            En la historia clínica y en la hoja de enfermería (Kardex), una anotación no es un número aislado, sino una estructura metrológica formal compuesta por cuatro componentes:
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Magnitud -->
+            <div class="interactive-card bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs mb-2">
+                1
+              </div>
+              <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Magnitud</h4>
+              <div class="text-sm sm:text-base font-extrabold text-accent my-1">Temperatura</div>
+              <p class="text-xs text-slate-500">Propiedad física cuantificable del estado térmico del organismo.</p>
+            </div>
+
+            <!-- Medida -->
+            <div class="interactive-card bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs mb-2">
+                2
+              </div>
+              <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Medida</h4>
+              <div class="text-sm sm:text-base font-extrabold text-accent my-1">37,5 °C</div>
+              <p class="text-xs text-slate-500">Valor numérico junto con la unidad concreta obtenida en el control.</p>
+            </div>
+
+            <!-- Unidad -->
+            <div class="interactive-card bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs mb-2">
+                3
+              </div>
+              <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Unidad</h4>
+              <div class="text-sm sm:text-base font-extrabold text-accent my-1">Grado Celsius</div>
+              <p class="text-xs text-slate-500">Patrón estándar adoptado para la escala graduada de referencia.</p>
+            </div>
+
+            <!-- Símbolo -->
+            <div class="interactive-card bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-xs mb-2">
+                4
+              </div>
+              <h4 class="font-bold text-slate-800 text-xs sm:text-sm">Símbolo</h4>
+              <div class="text-sm sm:text-base font-extrabold text-accent my-1 font-mono">°C</div>
+              <p class="text-xs text-slate-500">Signo convencional con el grado ubicado antes de la letra C mayúscula.</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-accent-light rounded-xl border border-accent/30 text-xs text-slate-700">
+            <span class="font-bold text-accent"><i class="fa-solid fa-lightbulb mr-1"></i> Regla de oro en enfermería:</span>
+            Anotar únicamente el número "37,5" sin unidad ni símbolo carece de validez legal y asistencial. La ausencia de unidad puede dar lugar a confusiones críticas en equipos importados o en pacientes bajo protocolos internacionales.
+          </div>
+        </div>
+
+        <!-- Navegación inferior -->
+        <div class="flex justify-end pt-2">
+          <button onclick="switchTab('mod2')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-sm transition">
+            <span>Avanzar al Módulo 2: Escalas & Termómetros en Espejo</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- MÓDULO 2: LAS TRES ESCALAS Y TERMÓMETROS EN ESPEJO             -->
+      <!-- ============================================================== -->
+      <section id="mod2" class="module-section hidden space-y-6">
+        
+        <!-- Module Intro Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-accent">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center space-x-2 text-accent text-xs font-semibold tracking-wider uppercase mb-1">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <span>Módulo 2 • Termodinámica y Escalas de Medida</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Escalas Celsius, Fahrenheit y Kelvin en Paralelo</h2>
+              <p class="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                El principio físico fundamental establece que <strong>distintos valores numéricos expresan exactamente el mismo estado térmico</strong> dependiendo de la escala seleccionada. Desliza la temperatura para observar la respuesta sincronizada de las tres columnas de mercurio.
+              </p>
+            </div>
+            <div class="bg-accent-light border border-accent/30 p-3 rounded-xl flex items-center space-x-3 self-start md:self-auto shrink-0">
+              <i class="fa-solid fa-arrows-split-up-and-left text-accent text-2xl"></i>
+              <div>
+                <p class="text-[11px] text-accent uppercase font-bold">Unidad SI</p>
+                <p class="text-xs text-slate-700 font-mono">Kelvin = K (Sin °)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Las Tres Escalas en Tarjetas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Celsius -->
+          <div class="interactive-card bg-white p-5 rounded-2xl shadow-sm border-t-4 border-sky-600 border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-sky-700 uppercase">Uso Clínico Habitual</span>
+                <span class="text-lg font-mono font-bold text-sky-800">°C</span>
+              </div>
+              <h3 class="font-bold text-base text-slate-800 mb-1">Escala Celsius</h3>
+              <p class="text-xs text-slate-500 mb-2">Anders Celsius (1701-1744, Suecia)</p>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                Escala estándar en Argentina y la mayor parte del mundo para el registro de signos vitales. Fijó originalmente 0 °C para la congelación y 100 °C para la ebullición del agua pura a 1 atm.
+              </p>
+            </div>
+            <div class="pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+              <i class="fa-solid fa-clock-rotate-left mr-1"></i> Ideó su escala usando mercurio sin conocer coetáneamente la de Fahrenheit.
+            </div>
+          </div>
+
+          <!-- Fahrenheit -->
+          <div class="interactive-card bg-white p-5 rounded-2xl shadow-sm border-t-4 border-amber-500 border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-amber-700 uppercase">Ámbito Anglosajón</span>
+                <span class="text-lg font-mono font-bold text-amber-800">°F</span>
+              </div>
+              <h3 class="font-bold text-base text-slate-800 mb-1">Escala Fahrenheit</h3>
+              <p class="text-xs text-slate-500 mb-2">Daniel Gabriel Fahrenheit (1686-1736)</p>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                De uso predominante en Estados Unidos y común en termómetros o sensores importados. Establece 32 °F para la congelación y 212 °F para la ebullición (intervalo dividido en 180 partes).
+              </p>
+            </div>
+            <div class="pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+              <i class="fa-solid fa-circle-exclamation mr-1 text-amber-600"></i> Muy frecuente en termómetros infrarrojos o apósitos térmicos extranjeros.
+            </div>
+          </div>
+
+          <!-- Kelvin -->
+          <div class="interactive-card bg-white p-5 rounded-2xl shadow-sm border-t-4 border-accent border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-accent uppercase">Sistema Internacional (SI)</span>
+                <span class="text-lg font-mono font-bold text-accent">K</span>
+              </div>
+              <h3 class="font-bold text-base text-slate-800 mb-1">Escala Kelvin</h3>
+              <p class="text-xs text-slate-500 mb-2">William Thomson - Lord Kelvin (1824-1907)</p>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                Unidad fundamental de temperatura termodinámica en el SI. Inicia en el cero absoluto (0 K). Sus intervalos son idénticos a los grados Celsius pero sin valores negativos posibles.
+              </p>
+            </div>
+            <div class="pt-2 border-t border-slate-100 text-[11px] font-bold text-accent">
+              <i class="fa-solid fa-triangle-exclamation mr-1"></i> Regla estricta: se simboliza con K y NUNCA lleva símbolo de grado (°).
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR INTERACTIVO: TERMÓMETROS EN ESPEJO -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <span class="text-xs font-bold text-accent uppercase tracking-wider">Laboratorio Biofísico</span>
+              <h3 class="text-lg font-bold text-slate-800">Termómetros en Espejo Sincronizados</h3>
+            </div>
+            <span class="text-xs bg-accent-light text-accent px-2.5 py-1 rounded-full font-semibold self-start sm:self-auto">
+              Simulación Dinámica de Mercurio
+            </span>
+          </div>
+
+          <!-- Slider de Control Térmico -->
+          <div class="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <label for="temp-slider" class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-accent"></i>
+                Control Deslizante de Estado Térmico:
+              </label>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-500">Valor fijado:</span>
+                <span id="slider-val-badge" class="font-mono font-bold text-sm text-accent bg-white px-2.5 py-0.5 rounded border border-slate-300">37,0 °C</span>
+              </div>
+            </div>
+
+            <input type="range" id="temp-slider" min="-273" max="100" value="37" step="0.5" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#436600]"
+                   oninput="onSliderMove(this.value)">
+
+            <!-- Presets de botones rápidos -->
+            <div class="flex gap-2 flex-wrap pt-1 text-xs">
+              <span class="text-slate-500 py-1">Puntos clave:</span>
+              <button onclick="setTempPreset(-273.15)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 text-slate-700 font-medium transition">Cero Absoluto (-273,15 °C)</button>
+              <button onclick="setTempPreset(0)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 text-slate-700 font-medium transition">Congelación (0 °C)</button>
+              <button onclick="setTempPreset(37.0)" class="px-2.5 py-1 bg-accent-light hover:bg-accent/20 rounded-lg border border-accent/40 text-accent font-bold transition">Normotermia (37 °C)</button>
+              <button onclick="setTempPreset(38.5)" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-300 text-rose-800 font-medium transition">Fiebre (38,5 °C)</button>
+              <button onclick="setTempPreset(100)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 text-slate-700 font-medium transition">Ebullición (100 °C)</button>
+            </div>
+          </div>
+
+          <!-- Los Tres Termómetros Gráficos en Paralelo -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-6 py-4 px-2 bg-slate-50 rounded-2xl border border-slate-200 justify-items-center">
+            
+            <!-- Termómetro Celsius -->
+            <div class="flex flex-col items-center">
+              <div class="text-center mb-2">
+                <span class="text-xs font-bold text-sky-700 uppercase tracking-wider block">Celsius</span>
+                <span id="display-c" class="text-base sm:text-2xl font-black text-slate-800 font-mono">37,0 °C</span>
+              </div>
+              <div class="relative w-8 sm:w-12 h-64 sm:h-72 tube-glass rounded-t-full border border-slate-400 p-1 flex flex-col justify-end items-center">
+                <div class="absolute inset-x-0 top-3 text-[10px] text-slate-400 flex justify-between px-1"><span>100°</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[26%] text-[10px] text-accent font-bold flex justify-between px-1"><span>37°</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[40%] text-[10px] text-slate-400 flex justify-between px-1"><span>0°</span><span>-</span></div>
+                <div class="absolute inset-x-0 bottom-1 text-[8px] text-slate-400 flex justify-between px-1"><span>-273°</span><span>-</span></div>
+                
+                <div id="mercury-c" class="w-full bg-accent rounded-t-full mercury-column" style="height: 40%;"></div>
+              </div>
+              <div id="bulb-c" class="w-12 sm:w-16 h-12 sm:h-16 -mt-3 rounded-full bg-accent border-4 border-slate-200 shadow-md flex items-center justify-center text-white text-xs font-bold">
+                °C
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 text-center">Clínico habitual</span>
+            </div>
+
+            <!-- Termómetro Fahrenheit -->
+            <div class="flex flex-col items-center">
+              <div class="text-center mb-2">
+                <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block">Fahrenheit</span>
+                <span id="display-f" class="text-base sm:text-2xl font-black text-slate-800 font-mono">98,60 °F</span>
+              </div>
+              <div class="relative w-8 sm:w-12 h-64 sm:h-72 tube-glass rounded-t-full border border-slate-400 p-1 flex flex-col justify-end items-center">
+                <div class="absolute inset-x-0 top-3 text-[10px] text-slate-400 flex justify-between px-1"><span>212°</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[26%] text-[10px] text-amber-700 font-bold flex justify-between px-1"><span>98.6°</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[40%] text-[10px] text-slate-400 flex justify-between px-1"><span>32°</span><span>-</span></div>
+                <div class="absolute inset-x-0 bottom-1 text-[8px] text-slate-400 flex justify-between px-1"><span>-459°</span><span>-</span></div>
+                
+                <div id="mercury-f" class="w-full bg-amber-600 rounded-t-full mercury-column" style="height: 40%;"></div>
+              </div>
+              <div id="bulb-f" class="w-12 sm:w-16 h-12 sm:h-16 -mt-3 rounded-full bg-amber-600 border-4 border-slate-200 shadow-md flex items-center justify-center text-white text-xs font-bold">
+                °F
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 text-center">Anglosajón</span>
+            </div>
+
+            <!-- Termómetro Kelvin -->
+            <div class="flex flex-col items-center">
+              <div class="text-center mb-2">
+                <span class="text-xs font-bold text-accent uppercase tracking-wider block">Kelvin (SI)</span>
+                <span id="display-k" class="text-base sm:text-2xl font-black text-slate-800 font-mono">310,15 K</span>
+              </div>
+              <div class="relative w-8 sm:w-12 h-64 sm:h-72 tube-glass rounded-t-full border border-slate-400 p-1 flex flex-col justify-end items-center">
+                <div class="absolute inset-x-0 top-3 text-[10px] text-slate-400 flex justify-between px-1"><span>373 K</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[26%] text-[10px] text-accent font-bold flex justify-between px-1"><span>310 K</span><span>-</span></div>
+                <div class="absolute inset-x-0 top-[40%] text-[10px] text-slate-400 flex justify-between px-1"><span>273 K</span><span>-</span></div>
+                <div class="absolute inset-x-0 bottom-1 text-[8px] text-slate-400 flex justify-between px-1"><span>0 K</span><span>-</span></div>
+                
+                <div id="mercury-k" class="w-full bg-accent rounded-t-full mercury-column" style="height: 40%;"></div>
+              </div>
+              <div id="bulb-k" class="w-12 sm:w-16 h-12 sm:h-16 -mt-3 rounded-full bg-accent border-4 border-slate-200 shadow-md flex items-center justify-center text-white text-xs font-bold">
+                K
+              </div>
+              <span class="text-[11px] text-accent font-semibold mt-2 text-center">¡Sin símbolo de grado!</span>
+            </div>
+
+          </div>
+
+          <!-- Estado Fisiológico Dinámico -->
+          <div id="thermal-state-card" class="p-4 rounded-xl bg-accent-light border border-accent/30 text-center transition">
+            <span class="text-xs uppercase tracking-wider font-bold text-accent block">Evaluación del Estado Térmico Fisiológico</span>
+            <span id="thermal-state-title" class="text-sm sm:text-base font-bold text-slate-800">Normotermia / Eutermia Fisiológica (36,0 °C a 37,5 °C)</span>
+            <p id="thermal-state-desc" class="text-xs text-slate-600 mt-1">
+              Homeostasis térmica óptima para el funcionamiento enzimático y metabólico del paciente.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tabla de Puntos Termodinámicos de Referencia Clave (a 1 atm) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-table-list text-accent text-lg"></i>
+            <h3 class="text-base sm:text-lg font-bold text-slate-800">Puntos Físicos de Referencia (Presión = 1 atmósfera)</h3>
+          </div>
+          <p class="text-xs text-slate-500 mb-2">
+            Comprobación empírica: <strong>diferentes valores numéricos corresponden a un idéntico estado físico térmico</strong>.
+          </p>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-300">
+                  <th class="p-3 font-bold">Punto Termodinámico</th>
+                  <th class="p-3 font-bold text-sky-700">Celsius (°C)</th>
+                  <th class="p-3 font-bold text-amber-700">Fahrenheit (°F)</th>
+                  <th class="p-3 font-bold text-accent">Kelvin (K)</th>
+                  <th class="p-3 font-bold text-slate-600">Significado Clínico / Biofísico</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3 font-semibold text-slate-800 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-700"></span> Cero Absoluto
+                  </td>
+                  <td class="p-3 font-mono font-bold text-sky-700">-273,15 °C</td>
+                  <td class="p-3 font-mono font-bold text-amber-700">-459,67 °F</td>
+                  <td class="p-3 font-mono font-bold text-accent">0 K</td>
+                  <td class="p-3 text-slate-600 text-xs">Mínima temperatura teórica; cesa la agitación molecular térmica.</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3 font-semibold text-slate-800 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span> Congelación del Agua
+                  </td>
+                  <td class="p-3 font-mono font-bold text-sky-700">0 °C</td>
+                  <td class="p-3 font-mono font-bold text-amber-700">32 °F</td>
+                  <td class="p-3 font-mono font-bold text-accent">273,15 K</td>
+                  <td class="p-3 text-slate-600 text-xs">Transición líquido-sólido del agua pura a nivel del mar (1 atm).</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition bg-accent-light/40">
+                  <td class="p-3 font-semibold text-slate-800 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-accent"></span> Temp. Corporal Humana
+                  </td>
+                  <td class="p-3 font-mono font-bold text-sky-700">37,0 °C</td>
+                  <td class="p-3 font-mono font-bold text-amber-700">98,6 °F</td>
+                  <td class="p-3 font-mono font-bold text-accent">310,15 K</td>
+                  <td class="p-3 text-slate-600 text-xs">Homeostasis fisiológica humana para óptima actividad enzimática.</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="p-3 font-semibold text-slate-800 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Ebullición del Agua
+                  </td>
+                  <td class="p-3 font-mono font-bold text-sky-700">100 °C</td>
+                  <td class="p-3 font-mono font-bold text-amber-700">212 °F</td>
+                  <td class="p-3 font-mono font-bold text-accent">373,15 K</td>
+                  <td class="p-3 text-slate-600 text-xs">Transición líquido-vapor a 1 atm; referencia de autoclaves y esterilización.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Navegación inferior -->
+        <div class="flex justify-between pt-2">
+          <button onclick="switchTab('mod1')" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl border border-gray-200 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Volver al Módulo 1</span>
+          </button>
+          <button onclick="switchTab('mod3')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-sm transition">
+            <span>Avanzar al Módulo 3: Fórmulas de Conversión</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- MÓDULO 3: FÓRMULAS Y PROCEDIMIENTOS DE CONVERSIÓN GUIADA       -->
+      <!-- ============================================================== -->
+      <section id="mod3" class="module-section hidden space-y-6">
+        
+        <!-- Module Intro Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-accent">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center space-x-2 text-accent text-xs font-semibold tracking-wider uppercase mb-1">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Módulo 3 • Métodos Matemáticos de Conversión</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Conversión Térmica Bidireccional Paso a Paso</h2>
+              <p class="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                Selecciona la conversión deseada para examinar su deducción matemática paso a paso y utilizar la calculadora clínica con resolución aritmética y análisis fisiológico inmediato.
+              </p>
+            </div>
+            <div class="bg-accent-light border border-accent/30 p-3 rounded-xl flex items-center space-x-3 self-start md:self-auto shrink-0">
+              <i class="fa-solid fa-square-root-variable text-accent text-2xl"></i>
+              <div>
+                <p class="text-[11px] text-accent uppercase font-bold">Razón de Escala</p>
+                <p class="text-xs text-slate-700 font-mono">180/100 = 9/5 = 1,8</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector de Fórmulas -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-accent uppercase tracking-wider block mb-2">Selecciona el Tipo de Conversión:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <button onclick="selectConversionType('C_TO_F')" id="btn-conv-C_TO_F" class="conv-btn p-3 rounded-xl border-2 border-accent bg-accent-light text-accent font-bold text-xs sm:text-sm text-center transition">
+              °C &rarr; °F
+              <span class="block text-[11px] font-normal text-slate-500">Celsius a Fahrenheit</span>
+            </button>
+            <button onclick="selectConversionType('F_TO_C')" id="btn-conv-F_TO_C" class="conv-btn p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm text-center transition">
+              °F &rarr; °C
+              <span class="block text-[11px] font-normal text-slate-500">Fahrenheit a Celsius</span>
+            </button>
+            <button onclick="selectConversionType('C_TO_K')" id="btn-conv-C_TO_K" class="conv-btn p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm text-center transition">
+              °C &rarr; K
+              <span class="block text-[11px] font-normal text-slate-500">Celsius a Kelvin</span>
+            </button>
+            <button onclick="selectConversionType('K_TO_C')" id="btn-conv-K_TO_C" class="conv-btn p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm text-center transition">
+              K &rarr; °C
+              <span class="block text-[11px] font-normal text-slate-500">Kelvin a Celsius</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel Detallado: Desglose Teórico y Calculadora Interactiva -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Columna Izquierda: Teoría y Ejemplo Guiado -->
+          <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span id="formula-badge" class="bg-accent-light text-accent text-xs font-bold px-2.5 py-1 rounded-full border border-accent/30">
+                  Ecuación Canónica
+                </span>
+                <span class="text-xs text-slate-400 font-medium">Biofísica Aplicada</span>
+              </div>
+              <h4 id="formula-title" class="text-base sm:text-lg font-bold text-slate-800 mb-2">Conversión de Grados Celsius a Fahrenheit</h4>
+              
+              <!-- Caja de Fórmula Matemática -->
+              <div class="bg-slate-900 text-amber-300 p-4 rounded-xl font-mono text-center text-sm sm:text-base my-3 shadow-inner">
+                <span id="formula-math-display">T(°F) = (T(°C) &times; 9/5) + 32</span>
+              </div>
+              <p id="formula-explanation" class="text-xs text-slate-600 leading-relaxed mb-4">
+                Como entre la congelación y ebullición del agua hay 100 grados Celsius y 180 grados Fahrenheit, la razón de proporcionalidad es 180/100 = 9/5 = 1,8. El desplazamiento del punto de congelación respecto al cero es de +32.
+              </p>
+
+              <!-- Ejemplo Fiel Guiado -->
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h5 class="text-xs font-bold uppercase tracking-wider text-accent mb-2">
+                  <i class="fa-solid fa-graduation-cap mr-1"></i> Ejemplo Clínico Guiado:
+                </h5>
+                <div id="formula-example-content" class="text-xs text-slate-700 space-y-1.5 font-mono">
+                  <div>• Convertir la temperatura corporal humana: <strong>37 °C</strong> a °F</div>
+                  <div>• Paso 1: Multiplicar por 1,8 (9/5): 37 &times; 1,8 = <strong>66,6</strong></div>
+                  <div>• Paso 2: Sumar 32: 66,6 + 32 = <strong>98,6 °F</strong></div>
+                  <div class="text-accent font-bold pt-1">Resultado: 37 °C equivalen exactamente a 98,6 °F</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Calculadora Interactiva en Vivo -->
+          <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border-2 border-accent/30 space-y-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center text-sm shadow-xs">
+                <i class="fa-solid fa-calculator"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-base">Calculadora con Desglose Inmediato</h4>
+            </div>
+
+            <div>
+              <label id="calc-input-label" for="calc-input-val" class="block text-xs font-bold text-slate-700 mb-1">
+                Ingrese Valor en Grados Celsius (°C):
+              </label>
+              <div class="relative">
+                <input type="number" id="calc-input-val" value="37" step="0.1" 
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-accent font-mono text-base font-bold text-slate-800">
+                <span id="calc-input-unit" class="absolute right-4 top-2.5 text-slate-400 font-bold text-sm">°C</span>
+              </div>
+            </div>
+
+            <!-- Botones de prueba rápida clínica -->
+            <div class="flex gap-2 flex-wrap text-xs">
+              <span class="text-slate-500 py-1">Valores habituales:</span>
+              <button onclick="setCalcPreset(36.5)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-medium text-slate-700">36,5</button>
+              <button onclick="setCalcPreset(37.0)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-medium text-slate-700">37,0</button>
+              <button onclick="setCalcPreset(38.5)" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 rounded font-medium text-rose-700 border border-rose-200">38,5 (Fiebre)</button>
+              <button onclick="setCalcPreset(40.0)" class="px-2.5 py-1 bg-red-100 hover:bg-red-200 rounded font-medium text-red-800 border border-red-300">40,0 (Hipertermia)</button>
+            </div>
+
+            <!-- Caja de Desglose en Vivo -->
+            <div class="bg-slate-900 text-white p-4 rounded-xl shadow-inner space-y-2">
+              <span class="text-[11px] font-bold text-emerald-300 uppercase tracking-wider block">Resolución Aritmética Paso a Paso:</span>
+              <div id="live-step-1" class="text-xs text-slate-300 font-mono">Paso 1: 37 &times; 1,8 = 66,6</div>
+              <div id="live-step-2" class="text-xs text-slate-300 font-mono">Paso 2: 66,6 + 32 = 98,6</div>
+              <div class="border-t border-slate-700 pt-2 flex items-center justify-between">
+                <span class="text-xs text-slate-300">Resultado Final:</span>
+                <span id="live-result" class="text-xl font-black text-amber-300 font-mono">98,60 °F</span>
+              </div>
+            </div>
+
+            <!-- Interpretación de Enfermería -->
+            <div id="calc-clinical-interpretation" class="p-3 bg-accent-light rounded-xl border border-accent/30 text-xs text-slate-700">
+              <strong><i class="fa-solid fa-stethoscope mr-1 text-accent"></i> Correlación en Paciente:</strong> Rango de normotermia. Constante vital preservada.
+            </div>
+          </div>
+        </div>
+
+        <!-- Navegación inferior -->
+        <div class="flex justify-between pt-2">
+          <button onclick="switchTab('mod2')" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl border border-gray-200 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Volver al Módulo 2</span>
+          </button>
+          <button onclick="switchTab('mod4')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-sm transition">
+            <span>Avanzar al Módulo 4: Casos Clínicos de Guardia</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- MÓDULO 4: CASOS CLÍNICOS E INSPECCIÓN METROLÓGICA               -->
+      <!-- ============================================================== -->
+      <section id="mod4" class="module-section hidden space-y-6">
+        
+        <!-- Module Intro Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-accent">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center space-x-2 text-accent text-xs font-semibold tracking-wider uppercase mb-1">
+                <i class="fa-solid fa-user-nurse"></i>
+                <span>Módulo 4 • Aplicación en la Práctica Asistencial</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Casos Clínicos de Guardia y Control de Notación</h2>
+              <p class="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
+                Aplica los conceptos de termometría, resuelve conversiones de guardia y audita la notación metrológica en registros de enfermería para recibir retroalimentación formativa inmediata.
+              </p>
+            </div>
+            <div class="bg-accent-light border border-accent/30 p-3 rounded-xl flex items-center space-x-3 self-start md:self-auto shrink-0">
+              <i class="fa-solid fa-notes-medical text-accent text-2xl"></i>
+              <div>
+                <p class="text-[11px] text-accent uppercase font-bold">Criterio Clínico</p>
+                <p class="text-xs text-slate-700 font-mono">Auditoría & Cálculo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección A: Inspector de Notación y Símbolos -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div class="border-b border-slate-100 pb-3">
+            <span class="text-xs font-bold text-accent uppercase tracking-wider">Auditoría Metrológica</span>
+            <h3 class="text-lg font-bold text-slate-800">El Inspector de Notación y Símbolos</h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+              Determina si la notación escrita en cada registro de enfermería cumple con las directivas del Sistema Internacional (SI):
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Item 1 -->
+            <div id="card-symbol-1" class="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-mono">Registro 01</span>
+                <span class="text-sm font-black font-mono bg-slate-100 px-3 py-1 rounded text-slate-800">310,15 °K</span>
+              </div>
+              <p class="text-xs text-slate-600">La enfermera anota la temperatura del recién nacido en Kelvin con el símbolo de grado.</p>
+              <div class="flex gap-2">
+                <button onclick="checkSymbol(1, true)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-50 transition">Correcto</button>
+                <button onclick="checkSymbol(1, false)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-red-300 text-red-700 hover:bg-red-50 transition">Incorrecto</button>
+              </div>
+              <div id="symbol-feedback-1" class="text-xs font-medium hidden p-2 rounded-lg bg-slate-50"></div>
+            </div>
+
+            <!-- Item 2 -->
+            <div id="card-symbol-2" class="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-mono">Registro 02</span>
+                <span class="text-sm font-black font-mono bg-slate-100 px-3 py-1 rounded text-slate-800">37,5 °C</span>
+              </div>
+              <p class="text-xs text-slate-600">Registro de control vespertino de signos vitales en servicio de clínica médica.</p>
+              <div class="flex gap-2">
+                <button onclick="checkSymbol(2, true)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-50 transition">Correcto</button>
+                <button onclick="checkSymbol(2, false)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-red-300 text-red-700 hover:bg-red-50 transition">Incorrecto</button>
+              </div>
+              <div id="symbol-feedback-2" class="text-xs font-medium hidden p-2 rounded-lg bg-slate-50"></div>
+            </div>
+
+            <!-- Item 3 -->
+            <div id="card-symbol-3" class="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-mono">Registro 03</span>
+                <span class="text-sm font-black font-mono bg-slate-100 px-3 py-1 rounded text-slate-800">98,6 F°</span>
+              </div>
+              <p class="text-xs text-slate-600">Anotación donde el símbolo de grado se ubica a la derecha de la letra F.</p>
+              <div class="flex gap-2">
+                <button onclick="checkSymbol(3, true)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-50 transition">Correcto</button>
+                <button onclick="checkSymbol(3, false)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-red-300 text-red-700 hover:bg-red-50 transition">Incorrecto</button>
+              </div>
+              <div id="symbol-feedback-3" class="text-xs font-medium hidden p-2 rounded-lg bg-slate-50"></div>
+            </div>
+
+            <!-- Item 4 -->
+            <div id="card-symbol-4" class="p-4 rounded-xl border border-slate-200 bg-white flex flex-col justify-between space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-mono">Registro 04</span>
+                <span class="text-sm font-black font-mono bg-slate-100 px-3 py-1 rounded text-slate-800">273,15 K</span>
+              </div>
+              <p class="text-xs text-slate-600">Valor de conservación criogénica expresado en la unidad base del Sistema Internacional.</p>
+              <div class="flex gap-2">
+                <button onclick="checkSymbol(4, true)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-emerald-300 text-emerald-700 hover:bg-emerald-50 transition">Correcto</button>
+                <button onclick="checkSymbol(4, false)" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-red-300 text-red-700 hover:bg-red-50 transition">Incorrecto</button>
+              </div>
+              <div id="symbol-feedback-4" class="text-xs font-medium hidden p-2 rounded-lg bg-slate-50"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección B: Casos Clínicos de Guardia -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <span class="text-xs font-bold text-accent uppercase tracking-wider">Resolución Asistencial</span>
+            <h3 class="text-lg font-bold text-slate-800">Casos Clínicos de la Guardia de Enfermería</h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+              Ingresa los resultados calculados para corroborar la conducta terapéutica y la equivalencia térmica:
+            </p>
+          </div>
+
+          <!-- Caso 1 -->
+          <div id="clinical-case-1" class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">
+                Caso 01 • Termómetro Digital Importado (°F &rarr; °C)
+              </span>
+              <span class="text-xs bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-medium">Urgencias Pediátricas</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              En la guardia ingresa un lactante con llanto persistente y calor al tacto. Se utiliza un termómetro timpánico importado calibrado de fábrica en escala Fahrenheit, el cual arroja una lectura de <strong class="text-amber-800 font-mono">102,2 °F</strong>. 
+              ¿Cuál es la temperatura exacta en grados Celsius (°C) para consignar en la historia clínica?
+            </p>
+            <div class="text-xs text-slate-500 bg-white p-2.5 rounded-lg border border-slate-200 font-mono">
+              Fórmula de apoyo: T(°C) = (T(°F) - 32) &times; 5/9
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3 pt-1">
+              <input type="number" id="input-case-1" placeholder="Ej: 39.0" step="0.1" 
+                     class="w-full sm:w-48 px-3 py-2 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-accent outline-none">
+              <button onclick="validateCase1()" id="btn-case-1" 
+                      class="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg transition shadow-sm">
+                Confirmar y Evaluar
+              </button>
+            </div>
+            <div id="feedback-case-1" class="text-xs hidden p-3 rounded-lg border"></div>
+          </div>
+
+          <!-- Caso 2 -->
+          <div id="clinical-case-2" class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span class="text-xs font-bold text-accent uppercase tracking-wider">
+                Caso 02 • Termodinámica en Laboratorio de Hemoderivados (°C &rarr; K)
+              </span>
+              <span class="text-xs bg-accent-light text-accent px-2 py-0.5 rounded font-medium">Hemoterapia & SI</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              Para conservar un lote de albúmina plasmática se requiere mantener la cámara a <strong class="text-sky-700 font-mono">4 °C</strong>. El protocolo científico internacional exige protocolizar el valor en la unidad base del Sistema Internacional (Kelvin).
+              ¿Qué valor numérico en Kelvin debes consignar?
+            </p>
+            <div class="text-xs text-slate-500 bg-white p-2.5 rounded-lg border border-slate-200 font-mono">
+              Fórmula de apoyo: T(K) = T(°C) + 273,15
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3 pt-1">
+              <input type="number" id="input-case-2" placeholder="Ej: 277.15" step="0.01" 
+                     class="w-full sm:w-48 px-3 py-2 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-accent outline-none">
+              <button onclick="validateCase2()" id="btn-case-2" 
+                      class="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg transition shadow-sm">
+                Confirmar y Evaluar
+              </button>
+            </div>
+            <div id="feedback-case-2" class="text-xs hidden p-3 rounded-lg border"></div>
+          </div>
+
+          <!-- Caso 3 -->
+          <div id="clinical-case-3" class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span class="text-xs font-bold text-rose-700 uppercase tracking-wider">
+                Caso 03 • Detección de Hipertermia y Conversión Multiescala
+              </span>
+              <span class="text-xs bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-medium">Cuidados Críticos</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              Un paciente postquirúrgico presenta una temperatura axilar de <strong class="text-rose-700 font-mono">38,5 °C</strong>. Se requiere reportar de inmediato el valor en grados Fahrenheit (°F) a un médico intensivista que realiza una interconsulta telemática.
+              ¿Cuál es el valor correspondiente en °F?
+            </p>
+            <div class="text-xs text-slate-500 bg-white p-2.5 rounded-lg border border-slate-200 font-mono">
+              Fórmula de apoyo: T(°F) = (T(°C) &times; 1,8) + 32
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3 pt-1">
+              <input type="number" id="input-case-3" placeholder="Ej: 101.3" step="0.1" 
+                     class="w-full sm:w-48 px-3 py-2 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-accent outline-none">
+              <button onclick="validateCase3()" id="btn-case-3" 
+                      class="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg transition shadow-sm">
+                Confirmar y Evaluar
+              </button>
+            </div>
+            <div id="feedback-case-3" class="text-xs hidden p-3 rounded-lg border"></div>
+          </div>
+        </div>
+
+        <!-- Botón hacia inicio/módulos -->
+        <div class="flex justify-between pt-2">
+          <button onclick="switchTab('mod3')" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl border border-gray-200 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Volver al Módulo 3</span>
+          </button>
+          <button onclick="switchTab('mod1')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-sm transition">
+            <span>Volver al Inicio (Módulo 1)</span>
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODAL VADEMÉCUM TEÓRICO (IDÉNTICO A U4-02) ==================== -->
+  <div id="modal-formulas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+      
+      <div class="bg-white p-4 sm:p-5 border-b border-gray-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-book-bookmark"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm sm:text-base">Vademécum de Termometría y Conversión</h3>
+            <p class="text-[11px] text-gray-500">Formulario y Constantes Térmicas (Matemática y Biofísica - UCCuyo)</p>
+          </div>
+        </div>
+        <button onclick="closeFormulasModal()" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6 text-xs sm:text-sm custom-scroll">
+        
+        <!-- Fórmulas Matemáticas -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+          <h4 class="font-bold text-accent mb-2 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-calculator"></i> 1. Ecuaciones de Conversión Térmica
+          </h4>
+          <div class="space-y-2 text-slate-700 font-mono">
+            <p><strong>De Celsius a Fahrenheit:</strong> $T_{\text{°F}} = \left(T_{\text{°C}} \times 1{,}8\right) + 32$</p>
+            <p><strong>De Fahrenheit a Celsius:</strong> $T_{\text{°C}} = \left(T_{\text{°F}} - 32\right) \times \frac{5}{9}$</p>
+            <p><strong>De Celsius a Kelvin:</strong> $T_{\text{K}} = T_{\text{°C}} + 273{,}15$</p>
+            <p><strong>De Kelvin a Celsius:</strong> $T_{\text{°C}} = T_{\text{K}} - 273{,}15$</p>
+          </div>
+        </div>
+
+        <!-- Puntos Termodinámicos -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+          <h4 class="font-bold text-accent mb-2 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-scale-balanced"></i> 2. Puntos Físicos de Referencia (a 1 atm)
+          </h4>
+          <ul class="list-disc list-inside space-y-1 text-slate-700 font-mono text-xs">
+            <li><strong>Cero Absoluto:</strong> $-273{,}15\text{ °C} = -459{,}67\text{ °F} = 0\text{ K}$</li>
+            <li><strong>Congelación del Agua:</strong> $0\text{ °C} = 32\text{ °F} = 273{,}15\text{ K}$</li>
+            <li><strong>Eutermia Humana:</strong> $37\text{ °C} = 98{,}6\text{ °F} = 310{,}15\text{ K}$</li>
+            <li><strong>Ebullición del Agua:</strong> $100\text{ °C} = 212\text{ °F} = 373{,}15\text{ K}$</li>
+          </ul>
+        </div>
+
+        <!-- Reglas Metrológicas -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+          <h4 class="font-bold text-accent mb-2 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-circle-check"></i> 3. Normas Notacionales del Sistema Internacional
+          </h4>
+          <p class="text-slate-700 text-xs leading-relaxed">
+            La unidad Kelvin es una unidad base absoluta del SI: se simboliza con la letra mayúscula <strong>K</strong> y <strong>jamás lleva el símbolo de grado (°)</strong>. Las escalas Celsius y Fahrenheit sí llevan grado antepuesto a la letra: <strong>°C</strong> y <strong>°F</strong>.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+        <button onclick="closeFormulasModal()" class="px-4 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover text-xs transition shadow-sm">
+          Cerrar Vademécum
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL GUÍA DE USO (IDÉNTICO A U4-02) ==================== -->
+  <div id="modal-tutorial" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+      
+      <div class="bg-white p-4 sm:p-5 border-b border-gray-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm sm:text-base">Guía de Uso del Simulador</h3>
+            <p class="text-[11px] text-gray-500">Orientaciones pedagógicas para el aspirante a la Licenciatura en Enfermería</p>
+          </div>
+        </div>
+        <button onclick="closeTutorial()" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6 text-xs md:text-sm text-gray-700 custom-scroll leading-relaxed">
+        
+        <!-- Sección 1: Propósito -->
+        <div class="border-b border-gray-100 pb-4">
+          <h4 class="font-bold text-accent text-sm mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-bullseye"></i> 1. Propósito Tecnopedagógico
+          </h4>
+          <p class="text-gray-600 leading-relaxed">
+            Este simulador interactivo está concebido como una herramienta de andamiaje formativo para los aspirantes al <strong>Curso de Ingreso a la Licenciatura en Enfermería (Facultad de Ciencias Médicas - Universidad Católica de Cuyo)</strong>. Su objetivo es consolidar el dominio conceptual y operativo de la termometría clínica, la metrología del signo vital y las conversiones entre escalas termodinámicas.
+          </p>
+        </div>
+
+        <!-- Sección 2: Módulos -->
+        <div class="border-b border-gray-100 pb-4">
+          <h4 class="font-bold text-accent text-sm mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group"></i> 2. Guía Detallada de Módulos y Herramientas Interactivas
+          </h4>
+          
+          <div class="space-y-3 text-gray-600">
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <strong class="text-accent flex items-center gap-1.5 mb-1 text-xs sm:text-sm">
+                <i class="fa-solid fa-temperature-half"></i> Módulo 1: Fundamentos y Metrología Clínica
+              </strong>
+              <p>Desglosa la estructura formal de una medición clínica ($37{,}5\text{ °C}$): Magnitud (Temperatura), Medida ($37{,}5\text{ °C}$), Unidad (Grado Celsius) y Símbolo (°C), comprendiendo por qué omitir la unidad invalida legalmente el registro.</p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <strong class="text-accent flex items-center gap-1.5 mb-1 text-xs sm:text-sm">
+                <i class="fa-solid fa-scale-balanced"></i> Módulo 2: Escalas, Puntos Fijos y Termómetros en Espejo
+              </strong>
+              <p>Compara las escalas Celsius, Fahrenheit y Kelvin (unidad base del SI). Experimenta con el control deslizante térmico y los botones de acceso rápido para mover en sincronía las tres columnas de mercurio; observa el cambio cromático del bulbo, el diagnóstico fisiológico inmediato (desde hipotermia severa hasta hipertermia) y corrobora en la tabla comparativa los puntos de referencia termodinámica a 1 atm (cero absoluto, congelación, eutermia y ebullición del agua).</p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <strong class="text-accent flex items-center gap-1.5 mb-1 text-xs sm:text-sm">
+                <i class="fa-solid fa-calculator"></i> Módulo 3: Fórmulas y Procedimientos de Conversión Guiada
+              </strong>
+              <p>Examina la deducción matemática de cada fórmula ($^{\circ}\text{C} \leftrightarrow {^{\circ}\text{F}}$ y $^{\circ}\text{C} \leftrightarrow \text{K}$) basada en la razón de proporcionalidad $180/100 = 9/5 = 1{,}8$. Utiliza la <strong>Calculadora Interactiva con Desglose Inmediato</strong>, prueba valores predeterminados de interés clínico (36,5 °C a 40,0 °C) y analiza el paso a paso aritmético con su correlación e interpretación para enfermería.</p>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <strong class="text-accent flex items-center gap-1.5 mb-1 text-xs sm:text-sm">
+                <i class="fa-solid fa-user-nurse"></i> Módulo 4: Casos Clínicos de Guardia y Control de Notación
+              </strong>
+              <p>Integra dos herramientas prácticas de sala: el <strong>Inspector de Notación y Símbolos</strong> (auditoría metrológica de 4 registros hospitalarios para afianzar que Kelvin se simboliza con K y nunca con °K) y los <strong>Casos Clínicos de Guardia</strong> (resolución interactiva del caso pediátrico con termómetro timpánico importado en °F, el lote de hemoderivados en K y el paciente postquirúrgico febril en °F, con validación procedimental y retroalimentación formativa inmediata).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 3: Consejos -->
+        <div>
+          <h4 class="font-bold text-accent text-sm mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info"></i> 3. Consejos de Estudio y Consulta Permanente
+          </h4>
+          <p class="text-gray-600 leading-relaxed">
+            Puedes abrir el <strong>Vademécum</strong> en cualquier momento desde la cabecera superior para consultar fórmulas y constantes físicas. Navega libremente por los módulos para afianzar tus competencias antes de la práctica en sala.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+        <button onclick="closeTutorial()" class="px-5 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover text-xs transition shadow-sm">
+          Entendido, Comenzar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICADOR FLOTANTE (TOAST PROPIO SIN ALERT) -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div id="toast-inner" class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 max-w-sm">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+      <div>
+        <p id="toast-title" class="font-bold text-xs">Notificación</p>
+        <p id="toast-body" class="text-xs text-slate-300">Mensaje</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Página Institucional Canónico (Idéntico a U4-01 y U4-02) -->
+  <footer class="bg-white border-t border-gray-200 py-3 text-center text-xs text-gray-500 font-medium">
+    Desarrollado por vesalio - Todos los derechos reservados
+  </footer>
+
+  <!-- ==================== LÓGICA JAVASCRIPT INTEGRAL ==================== -->
+  <script>
+    // ESTADO GLOBAL DE LA APLICACIÓN
+    const state = {
+      activeTab: 'mod1',
+      activeFormula: 'C_TO_F'
+    };
+
+    // NAVEGACIÓN ENTRE MÓDULOS (ESTILO CANÓNICO U4-02)
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+
+      // Ocultar todas las secciones
+      document.querySelectorAll('.module-section').forEach(sec => {
+        sec.classList.add('hidden');
+      });
+
+      // Mostrar sección seleccionada
+      const targetSec = document.getElementById(tabId);
+      if (targetSec) targetSec.classList.remove('hidden');
+
+      // Actualizar botones de navegación lateral
+      document.querySelectorAll('#navTabs .nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = "nav-btn bg-accent text-white flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm flex items-center gap-2";
+        } else {
+          btn.className = "nav-btn text-gray-700 hover:bg-gray-100 flex-1 lg:flex-none text-left py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2";
+        }
+      });
+
+      // Scroll suave hacia arriba
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Render KaTeX si aplica
+      if (window.renderMathInElement) {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        } catch(e) {}
+      }
+    }
+
+    // MODAL VADEMÉCUM
+    function openFormulasModal() {
+      const modal = document.getElementById('modal-formulas');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.renderMathInElement) {
+          try {
+            renderMathInElement(modal, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+              ],
+              throwOnError: false
+            });
+          } catch(e) {}
+        }
+      }
+    }
+    function closeFormulasModal() {
+      const modal = document.getElementById('modal-formulas');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // MODAL GUÍA DE USO
+    function openTutorial() {
+      const modal = document.getElementById('modal-tutorial');
+      if (modal) modal.classList.remove('hidden');
+    }
+    function closeTutorial() {
+      const modal = document.getElementById('modal-tutorial');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // TOAST NOTIFICATIONS PROPIO
+    let toastTimeout = null;
+    function showToast(title, msg, type = 'info') {
+      const toast = document.getElementById('toast-notification');
+      const toastTitle = document.getElementById('toast-title');
+      const toastBody = document.getElementById('toast-body');
+      const toastIcon = document.getElementById('toast-icon');
+
+      if (!toast) return;
+
+      toastTitle.textContent = title;
+      toastBody.textContent = msg;
+
+      if (type === 'success') {
+        toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+      } else if (type === 'error') {
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-rose-400 text-lg';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-info text-sky-400 text-lg';
+      }
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    function formatNum(num) {
+      return num.toFixed(2).replace('.', ',');
+    }
+
+    // ==========================================
+    // MÓDULO 2: TERMÓMETROS EN ESPEJO
+    // ==========================================
+    function setTempPreset(cVal) {
+      const slider = document.getElementById('temp-slider');
+      if (slider) {
+        slider.value = cVal;
+        onSliderMove(cVal);
+      }
+    }
+
+    function onSliderMove(val) {
+      const c = parseFloat(val);
+      const f = (c * 1.8) + 32;
+      const k = c + 273.15;
+
+      // Actualizar rótulos
+      document.getElementById('slider-val-badge').textContent = `${formatNum(c)} °C`;
+      document.getElementById('display-c').textContent = `${formatNum(c)} °C`;
+      document.getElementById('display-f').textContent = `${formatNum(f)} °F`;
+      document.getElementById('display-k').textContent = `${formatNum(k)} K`;
+
+      // Altura del mercurio en porcentaje
+      const minC = -273.15;
+      const maxC = 100.0;
+      let percent = ((c - minC) / (maxC - minC)) * 92 + 5;
+      if (percent < 5) percent = 5;
+      if (percent > 98) percent = 98;
+
+      // Color dinámico según rango fisiológico
+      let hexColor = '#436600';
+      if (c <= -270) {
+        hexColor = '#0369a1';
+      } else if (c <= 0) {
+        hexColor = '#0284c7';
+      } else if (c > 0 && c < 35.0) {
+        hexColor = '#4f46e5';
+      } else if (c >= 35.0 && c < 36.0) {
+        hexColor = '#0891b2';
+      } else if (c >= 36.0 && c <= 37.5) {
+        hexColor = '#436600'; // Normotermia UCCuyo
+      } else if (c > 37.5 && c <= 38.3) {
+        hexColor = '#d97706'; // Febrícula
+      } else if (c > 38.3 && c <= 41.5) {
+        hexColor = '#dc2626'; // Fiebre
+      } else {
+        hexColor = '#991b1b'; // Ebullición
+      }
+
+      ['c', 'f', 'k'].forEach(t => {
+        const bar = document.getElementById(`mercury-${t}`);
+        const bulb = document.getElementById(`bulb-${t}`);
+        if (bar) {
+          bar.style.height = `${percent}%`;
+          bar.style.backgroundColor = hexColor;
+        }
+        if (bulb) {
+          bulb.style.backgroundColor = hexColor;
+        }
+      });
+
+      updateClinicalStateCard(c);
+    }
+
+    function updateClinicalStateCard(c) {
+      const card = document.getElementById('thermal-state-card');
+      const title = document.getElementById('thermal-state-title');
+      const desc = document.getElementById('thermal-state-desc');
+
+      if (c <= -270) {
+        card.className = "p-4 rounded-xl bg-slate-100 border border-slate-300 text-center";
+        title.textContent = "Cero Absoluto (0 K / -273,15 °C)";
+        desc.textContent = "Límite termodinámico donde cesa la agitación molecular y la energía cinética de las partículas.";
+      } else if (c <= 0) {
+        card.className = "p-4 rounded-xl bg-sky-50 border border-sky-300 text-center";
+        title.textContent = "Rango de Congelación del Agua (<= 0 °C)";
+        desc.textContent = "Transición de fase sólido-líquido y conservación biológica en cadena de frío estricta.";
+      } else if (c > 0 && c < 35.0) {
+        card.className = "p-4 rounded-xl bg-indigo-50 border border-indigo-300 text-center";
+        title.textContent = "Hipotermia Clínica Severa (< 35,0 °C)";
+        desc.textContent = "Riesgo de arritmias, bradicardia y depresión del SNC. Requiere medidas activas de recalentamiento.";
+      } else if (c >= 35.0 && c < 36.0) {
+        card.className = "p-4 rounded-xl bg-cyan-50 border border-cyan-300 text-center";
+        title.textContent = "Hipotermia Leve (35,0 °C a 35,9 °C)";
+        desc.textContent = "Respuesta compensatoria mediante temblor involuntario y vasoconstricción periférica.";
+      } else if (c >= 36.0 && c <= 37.5) {
+        card.className = "p-4 rounded-xl bg-accent-light border border-accent/30 text-center";
+        title.textContent = "Normotermia / Eutermia Fisiológica (36,0 °C a 37,5 °C)";
+        desc.textContent = "Homeostasis térmica óptima para el funcionamiento metabólico y enzimático del organismo humano.";
+      } else if (c > 37.5 && c <= 38.0) {
+        card.className = "p-4 rounded-xl bg-amber-50 border border-amber-300 text-center";
+        title.textContent = "Febrícula / Estado Subfebril (37,6 °C a 38,0 °C)";
+        desc.textContent = "Alerta asistencial temprana. Requiere vigilancia estrecha de la curva térmica e hidratación.";
+      } else if (c > 38.0 && c <= 40.0) {
+        card.className = "p-4 rounded-xl bg-rose-50 border border-rose-300 text-center";
+        title.textContent = "Fiebre / Pirexia Clínica (> 38,0 °C)";
+        desc.textContent = "Reajuste hipotalámico mediado por pirógenos. Medidas físicas y antipiréticos según prescripción médica.";
+      } else if (c > 40.0 && c < 99) {
+        card.className = "p-4 rounded-xl bg-red-100 border border-red-400 text-center";
+        title.textContent = "Hipertermia Severa (> 40,0 °C)";
+        desc.textContent = "Emergencia médica crítica. Riesgo inminente de desnaturalización proteica, convulsiones y daño celular.";
+      } else {
+        card.className = "p-4 rounded-xl bg-red-200 border border-red-500 text-center";
+        title.textContent = "Punto de Ebullición del Agua (100 °C / 212 °F / 373,15 K)";
+        desc.textContent = "Vaporización a 1 atmósfera de presión. Referencia biofísica de autoclaves y esterilización hospitalaria.";
+      }
+    }
+
+    // ==========================================
+    // MÓDULO 3: CALCULADORA Y FÓRMULAS
+    // ==========================================
+    const formulaMeta = {
+      'C_TO_F': {
+        title: 'Conversión de Grados Celsius a Fahrenheit',
+        formulaStr: 'T(°F) = (T(°C) × 9/5) + 32',
+        explanation: 'Multiplicamos el valor en °C por el factor de proporción 9/5 (1,8) y sumamos 32 grados para compensar la diferencia de cero entre ambas escalas.',
+        unitIn: '°C',
+        unitOut: '°F',
+        inputLabel: 'Ingrese Valor en Grados Celsius (°C):',
+        example: `• Ejemplo clínico guiado: 37 °C a °F<br>• Paso 1: (37 × 1,8) = 66,6<br>• Paso 2: 66,6 + 32 = 98,6 °F<br><strong class="text-accent">Resultado: 37 °C equivalen exactamente a 98,6 °F</strong>`
+      },
+      'F_TO_C': {
+        title: 'Conversión de Grados Fahrenheit a Celsius',
+        formulaStr: 'T(°C) = (T(°F) - 32) × 5/9',
+        explanation: 'Procedimiento inverso: restamos 32 para cancelar el desplazamiento y multiplicamos el resto por la fracción 5/9 (o dividimos entre 1,8).',
+        unitIn: '°F',
+        unitOut: '°C',
+        inputLabel: 'Ingrese Valor en Grados Fahrenheit (°F):',
+        example: `• Ejemplo clínico inverso: 98,6 °F a °C<br>• Paso 1: (98,6 - 32) = 66,6<br>• Paso 2: 66,6 × 5/9 = 37,0 °C<br><strong class="text-accent">Resultado: 98,6 °F equivalen a 37 °C</strong>`
+      },
+      'C_TO_K': {
+        title: 'Conversión de Grados Celsius a Kelvin (SI)',
+        formulaStr: 'T(K) = T(°C) + 273,15',
+        explanation: 'Ambas escalas poseen intervalos de igual magnitud (escalas centígradas); solo se suma la distancia al cero absoluto (273,15). Recordar que Kelvin se escribe sin símbolo de grado (°).',
+        unitIn: '°C',
+        unitOut: 'K',
+        inputLabel: 'Ingrese Valor en Grados Celsius (°C):',
+        example: `• Ejemplo clínico guiado: 37 °C a K<br>• Paso 1: 37 + 273,15 = 310,15 K<br><strong class="text-accent">Resultado: 37 °C equivalen a 310,15 K (sin símbolo de grado)</strong>`
+      },
+      'K_TO_C': {
+        title: 'Conversión de Kelvin a Grados Celsius',
+        formulaStr: 'T(°C) = T(K) - 273,15',
+        explanation: 'Para pasar de la escala termodinámica absoluta a la escala clínica centígrada, se restan 273,15 unidades al valor registrado.',
+        unitIn: 'K',
+        unitOut: '°C',
+        inputLabel: 'Ingrese Valor en Kelvin (K):',
+        example: `• Ejemplo inverso guiado: 310,15 K a °C<br>• Paso 1: 310,15 - 273,15 = 37,0 °C<br><strong class="text-accent">Resultado: 310,15 K equivalen exactamente a 37 °C</strong>`
+      }
+    };
+
+    function selectConversionType(typeKey) {
+      state.activeFormula = typeKey;
+      
+      document.querySelectorAll('.conv-btn').forEach(btn => {
+        btn.className = "conv-btn p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs sm:text-sm text-center transition";
+      });
+      const activeBtn = document.getElementById(`btn-conv-${typeKey}`);
+      if (activeBtn) {
+        activeBtn.className = "conv-btn p-3 rounded-xl border-2 border-accent bg-accent-light text-accent font-bold text-xs sm:text-sm text-center transition";
+      }
+
+      const info = formulaMeta[typeKey];
+      document.getElementById('formula-title').textContent = info.title;
+      document.getElementById('formula-math-display').innerHTML = info.formulaStr;
+      document.getElementById('formula-explanation').textContent = info.explanation;
+      document.getElementById('formula-example-content').innerHTML = info.example;
+
+      document.getElementById('calc-input-label').textContent = info.inputLabel;
+      document.getElementById('calc-input-unit').textContent = info.unitIn;
+
+      if (typeKey === 'C_TO_F' || typeKey === 'C_TO_K') {
+        document.getElementById('calc-input-val').value = '37';
+      } else if (typeKey === 'F_TO_C') {
+        document.getElementById('calc-input-val').value = '98.6';
+      } else if (typeKey === 'K_TO_C') {
+        document.getElementById('calc-input-val').value = '310.15';
+      }
+
+      computeLiveConversion();
+    }
+
+    function setCalcPreset(val) {
+      const calcInput = document.getElementById('calc-input-val');
+      if (calcInput) {
+        calcInput.value = val;
+        computeLiveConversion();
+      }
+    }
+
+    function computeLiveConversion() {
+      const calcInput = document.getElementById('calc-input-val');
+      const rawVal = parseFloat(calcInput.value);
+      if (isNaN(rawVal)) {
+        document.getElementById('live-step-1').textContent = "Esperando entrada numérica válida...";
+        document.getElementById('live-step-2').textContent = "";
+        document.getElementById('live-result').textContent = "--";
+        return;
+      }
+
+      const type = state.activeFormula;
+      let step1 = "";
+      let step2 = "";
+      let resultVal = 0;
+      let unitOut = "";
+      let interp = "";
+
+      if (type === 'C_TO_F') {
+        const intermediate = rawVal * 1.8;
+        resultVal = intermediate + 32;
+        unitOut = "°F";
+        step1 = `Paso 1: ${formatNum(rawVal)} × 1,8 = ${formatNum(intermediate)}`;
+        step2 = `Paso 2: ${formatNum(intermediate)} + 32 = ${formatNum(resultVal)} °F`;
+        interp = getClinicalInterpretationC(rawVal);
+      } else if (type === 'F_TO_C') {
+        const intermediate = rawVal - 32;
+        resultVal = intermediate * (5/9);
+        unitOut = "°C";
+        step1 = `Paso 1: ${formatNum(rawVal)} - 32 = ${formatNum(intermediate)}`;
+        step2 = `Paso 2: ${formatNum(intermediate)} × (5/9) = ${formatNum(resultVal)} °C`;
+        interp = getClinicalInterpretationC(resultVal);
+      } else if (type === 'C_TO_K') {
+        resultVal = rawVal + 273.15;
+        unitOut = "K";
+        step1 = `Paso 1: ${formatNum(rawVal)} + 273,15 = ${formatNum(resultVal)} K`;
+        step2 = `Regla SI: Notación oficial en Kelvin (K) sin símbolo de grado (°).`;
+        interp = getClinicalInterpretationC(rawVal);
+      } else if (type === 'K_TO_C') {
+        resultVal = rawVal - 273.15;
+        unitOut = "°C";
+        step1 = `Paso 1: ${formatNum(rawVal)} - 273,15 = ${formatNum(resultVal)} °C`;
+        step2 = `Escala clínica centígrada correspondiente.`;
+        interp = getClinicalInterpretationC(resultVal);
+      }
+
+      document.getElementById('live-step-1').textContent = step1;
+      document.getElementById('live-step-2').textContent = step2;
+      document.getElementById('live-result').textContent = `${formatNum(resultVal)} ${unitOut}`;
+      document.getElementById('calc-clinical-interpretation').innerHTML = `<strong><i class="fa-solid fa-stethoscope mr-1 text-accent"></i> Análisis de Enfermería:</strong> ${interp}`;
+    }
+
+    function getClinicalInterpretationC(tempC) {
+      if (tempC < 35.0) return `<span class="text-indigo-700 font-semibold">Hipotermia.</span> Monitorización hemodinámica y abrigo térmico.`;
+      if (tempC >= 35.0 && tempC < 36.0) return `<span class="text-sky-700 font-semibold">Temperatura baja.</span> Posible exposición al frío ambiental o postoperatorio inmediato.`;
+      if (tempC >= 36.0 && tempC <= 37.5) return `<span class="text-accent font-semibold">Normotermia / Rango Eutérmico.</span> Estado de homeostasis fisiológica preservado.`;
+      if (tempC > 37.5 && tempC <= 38.0) return `<span class="text-amber-700 font-semibold">Febrícula.</span> Mantener vigilancia de signos vitales cada 2 horas.`;
+      if (tempC > 38.0 && tempC <= 40.0) return `<span class="text-rose-700 font-semibold">Pirexia / Síndrome Febril.</span> Administrar antipiréticos y medidas físicas según indicación.`;
+      return `<span class="text-red-700 font-semibold">Hipertermia de Alto Riesgo.</span> Notificar de inmediato al médico a cargo.`;
+    }
+
+    // ==========================================
+    // MÓDULO 4: INSPECCIÓN DE SÍMBOLOS Y CASOS
+    // ==========================================
+    const symbolAnswersKey = {
+      1: false, // 310,15 °K es INCORRECTO
+      2: true,  // 37,5 °C es CORRECTO
+      3: false, // 98,6 F° es INCORRECTO
+      4: true   // 273,15 K es CORRECTO
+    };
+
+    const symbolExplanations = {
+      1: "¡Correcto! En el Sistema Internacional, la escala Kelvin se expresa como 'K' y jamás lleva el símbolo de grado (°).",
+      2: "¡Excelente! La convención para Celsius sitúa el grado antes de la C mayúscula (°C).",
+      3: "¡Muy bien detectado! El grado debe anteponerse a la letra mayúscula: se escribe °F y nunca F°.",
+      4: "¡Exacto! 273,15 K cumple de forma estricta con las directivas metrológicas del SI."
+    };
+
+    function checkSymbol(id, userChoice) {
+      const correct = symbolAnswersKey[id];
+      const feedbackEl = document.getElementById(`symbol-feedback-${id}`);
+      const cardEl = document.getElementById(`card-symbol-${id}`);
+
+      feedbackEl.classList.remove('hidden', 'text-emerald-700', 'text-rose-700');
+
+      if (userChoice === correct) {
+        feedbackEl.classList.add('text-emerald-700');
+        feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ${symbolExplanations[id]}`;
+        cardEl.classList.add('border-emerald-300', 'bg-emerald-50/20');
+        cardEl.classList.remove('border-rose-300', 'bg-rose-50/20');
+        showToast("¡Evaluación Correcta!", "Notación metrológica validada.", "success");
+      } else {
+        feedbackEl.classList.add('text-rose-700');
+        feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 text-rose-600"></i> Incorrecto. Revisa las normas: Kelvin (K) nunca lleva grado y Fahrenheit se escribe °F.`;
+        cardEl.classList.add('border-rose-300', 'bg-rose-50/20');
+        showToast("Observación", "Revisa la convención de símbolos del SI.", "error");
+      }
+    }
+
+    function validateCase1() {
+      const val = parseFloat(document.getElementById('input-case-1').value);
+      const feedback = document.getElementById('feedback-case-1');
+      feedback.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-300', 'bg-rose-50', 'text-rose-800', 'border-rose-300');
+
+      if (Math.abs(val - 39.0) <= 0.15) {
+        feedback.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
+        feedback.innerHTML = `
+          <div class="font-bold"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ¡Resolución Impecable!</div>
+          <div>Cálculo: (102,2 - 32) × 5/9 = 70,2 × 5/9 = <strong>39,0 °C</strong>. El lactante presenta fiebre alta (pirexia). Notificar de urgencia.</div>
+        `;
+        showToast("¡Caso 1 Resuelto!", "Conversión Fahrenheit a Celsius validada.", "success");
+      } else {
+        feedback.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-300');
+        feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i> Valor incorrecto. Aplica: (102,2 - 32) × 5 ÷ 9. Verifica los cálculos.`;
+        showToast("Revisar cálculo", "Resuelve primero la resta de 32.", "error");
+      }
+    }
+
+    function validateCase2() {
+      const val = parseFloat(document.getElementById('input-case-2').value);
+      const feedback = document.getElementById('feedback-case-2');
+      feedback.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-300', 'bg-rose-50', 'text-rose-800', 'border-rose-300');
+
+      if (Math.abs(val - 277.15) <= 0.2) {
+        feedback.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
+        feedback.innerHTML = `
+          <div class="font-bold"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ¡Resolución Impecable!</div>
+          <div>Cálculo: 4 + 273,15 = <strong>277,15 K</strong>. Se asienta en el libro de hemoterapia en unidades del SI sin símbolo de grado.</div>
+        `;
+        showToast("¡Caso 2 Resuelto!", "Conversión a escala Kelvin validada.", "success");
+      } else {
+        feedback.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-300');
+        feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i> Valor incorrecto. Recuerda sumar exactamente 273,15 a la temperatura de 4 °C.`;
+        showToast("Revisar cálculo", "Fórmula: T(K) = T(°C) + 273,15", "error");
+      }
+    }
+
+    function validateCase3() {
+      const val = parseFloat(document.getElementById('input-case-3').value);
+      const feedback = document.getElementById('feedback-case-3');
+      feedback.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-300', 'bg-rose-50', 'text-rose-800', 'border-rose-300');
+
+      if (Math.abs(val - 101.3) <= 0.2) {
+        feedback.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
+        feedback.innerHTML = `
+          <div class="font-bold"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ¡Resolución Impecable!</div>
+          <div>Cálculo: (38,5 × 1,8) + 32 = 69,3 + 32 = <strong>101,3 °F</strong>. Paciente con hipertermia postquirúrgica confirmado.</div>
+        `;
+        showToast("¡Caso 3 Resuelto!", "Conversión y diagnóstico térmico completos.", "success");
+      } else {
+        feedback.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-300');
+        feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i> Valor incorrecto. Multiplica 38,5 por 1,8 y luego suma 32.`;
+        showToast("Revisar cálculo", "Fórmula: (38,5 × 1,8) + 32", "error");
+      }
+    }
+
+    // INICIALIZACIÓN AL CARGAR LA VENTANA
+    window.addEventListener('DOMContentLoaded', () => {
+      switchTab('mod1');
+      onSliderMove(37.0);
+      selectConversionType('C_TO_F');
+
+      const calcInput = document.getElementById('calc-input-val');
+      if (calcInput) {
+        calcInput.addEventListener('input', computeLiveConversion);
+      }
+    });
+  </script>
+</body>
+</html>
